@@ -3,9 +3,12 @@ using System.Collections;
 
 public class GameController : MonoBehaviour 
 {
+	public QuestionOptions questionOptions;
 	public GameObject hazard;
+	public GameObject powerupPrefab;
 	public Vector3 spawnValues;
 	public int hazardCount;
+	private int hazardsKilled;
 	public float spawnWait;
 	public float startWait;
 	public float waveWait;
@@ -13,10 +16,14 @@ public class GameController : MonoBehaviour
 	public GUIText restartText;
 	public GUIText gameOverText;
 
+
 	private int score;
 	private bool gameOver;
 	private bool restart;
-
+	public float currentSlowMo;
+	public float slowTimeAllowed;
+	public bool presentOptions = false;
+	public float slowMoFactor;
 	void Start()
 	{
 		gameOver = false;
@@ -27,6 +34,9 @@ public class GameController : MonoBehaviour
 		score = 0;
 		UpdateScore();
 		StartCoroutine(	SpawnWaves() );
+
+		hazardsKilled =0;
+		questionOptions.gameObject.SetActive(false);
 	}
 
 	void Update()
@@ -34,6 +44,24 @@ public class GameController : MonoBehaviour
 		if (restart)
 			if (Input.GetKeyDown(KeyCode.R) || Input.GetButtonDown("Fire2"))
 				Application.LoadLevel(Application.loadedLevel);
+		if (presentOptions)
+		{
+			if (Time.timeScale == 1.0f)
+				Time.timeScale = slowMoFactor;
+			else
+				Time.timeScale = 1.0f;
+			Time.fixedDeltaTime = 0.02f * Time.timeScale;
+			presentOptions = false;
+		}
+		if (Time.timeScale == slowMoFactor)
+			currentSlowMo += Time.deltaTime;
+		if (currentSlowMo > slowTimeAllowed)
+		{
+			currentSlowMo = 0;
+			Time.timeScale = 1.0f;
+			questionOptions.gameObject.SetActive(false);
+
+		}
 	}
 
 	IEnumerator SpawnWaves()
@@ -41,6 +69,7 @@ public class GameController : MonoBehaviour
 		yield return new WaitForSeconds(startWait);
 		while (true)
 		{
+			hazardsKilled = 0;
 			for (int i = 0; i < hazardCount; i++)
 			{
 				Vector3 spawnPosition = new Vector3(Random.Range(-spawnValues.x, spawnValues.x), spawnValues.y, spawnValues.z);
@@ -60,6 +89,16 @@ public class GameController : MonoBehaviour
 		}
 	}
 
+	public void AddHazardsKilled(Transform hazardTransform)
+	{
+		hazardsKilled++;
+		if (hazardsKilled == hazardCount)
+		{
+			Instantiate(powerupPrefab, hazardTransform.position, hazardTransform.rotation);
+			hazardsKilled = 0;
+		}
+	}
+
 	public void AddScore(int newScoreValue)
 	{
 		score += newScoreValue;
@@ -75,6 +114,20 @@ public class GameController : MonoBehaviour
 	{
 		gameOverText.text = "Game Over";
 		gameOver = true;
+	}
+
+	public void PresentOptions()
+	{
+		if (Time.timeScale == 1.0f)
+		{
+			presentOptions = true;
+			questionOptions.gameObject.SetActive(true);
+		}
+	}
+
+	public bool ChoiceCorrect()
+	{
+		return false;
 	}
 
 }

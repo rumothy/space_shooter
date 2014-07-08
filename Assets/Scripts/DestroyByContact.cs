@@ -19,17 +19,34 @@ public class DestroyByContact : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		//Debug.Log(other.name);
+		bool hit = true;
 		if (other.tag == "Boundary")
 			return;
 
-		Instantiate(explosion, transform.position, transform.rotation);
+		if (other.tag == "Level")
+			return;
+
+		if (other.tag == "Enemy")
+			return;
+
+		if (other.tag == "Missile")
+		{
+			gameController.PresentOptions();
+			if (!gameController.ChoiceCorrect())
+				hit = false;
+		}
+
+
 		if (other.tag == "Player")
 		{
 			Instantiate(playerExplosion, other.transform.position, other.transform.rotation);
 			gameController.GameOver();
 		}
+
+		if (!hit) return;
+		Instantiate(explosion, transform.position, transform.rotation);
 		gameController.AddScore(scoreValue);
+		gameController.AddHazardsKilled(transform);
 		Destroy(other.gameObject);
 		Destroy(gameObject);
 	}

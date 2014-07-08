@@ -31,3 +31,7 @@ obj/
 ehthumbs.db
 Thumbs.db
 
+# ============ #
+# Specified #
+# ============ #
+*.wav
