@@ -3,7 +3,8 @@ using System.Collections;
 
 public class GameController : MonoBehaviour 
 {
-	public QuestionOptions questionOptions;
+	public GameObject questionOptionsGameObject;
+	private QuestionOptions questionOptions;
 
 	public GameObject hazard;
 	public GameObject powerupPrefab;
@@ -28,7 +29,7 @@ public class GameController : MonoBehaviour
 
 	void IntializeQuestionOptionsBehavior()
 	{
-		questionOptions = gameObject.GetComponent<QuestionOptions>();
+		questionOptions = questionOptionsGameObject.GetComponent<QuestionOptions>();
 		if (questionOptions == null)
 			Debug.Log("Cannot find 'QuestionOptions' script");
 	}
@@ -45,7 +46,7 @@ public class GameController : MonoBehaviour
 		StartCoroutine(	SpawnWaves() );
 
 		hazardsKilled =0;
-		//IntializeQuestionOptionsBehavior();
+		IntializeQuestionOptionsBehavior();
 		questionOptions.gameObject.SetActive(false);
 	}
 
