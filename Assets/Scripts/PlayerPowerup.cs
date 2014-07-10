@@ -6,15 +6,15 @@ public class PlayerPowerup : MonoBehaviour
 	public float speedIncrease;
 	public AudioClip applyPowerupSound;
 
-	public PowerupOptions powerupOptions;
+	private PowerupOptions powerupOptions;
 	private PlayerController playerController;
 	void Start()
 	{
-//		GameObject powerupOptionsObject = GameObject.FindWithTag("PowerupOptions");
-//		if (powerupOptionsObject != null)
-//			powerupOptions = powerupOptionsObject.GetComponent<PowerupOptions>();
-//		if (powerupOptions == null)
-//			Debug.Log("Cannot find 'PowerupOptions' script");
+		GameObject powerupOptionsObject = GameObject.FindWithTag("PowerupOptions");
+		if (powerupOptionsObject != null)
+			powerupOptions = powerupOptionsObject.GetComponent<PowerupOptions>();
+		if (powerupOptions == null)
+			Debug.Log("Cannot find 'PowerupOptions' script");
 
 		IntializePlayerControllerBehavior();
 	}

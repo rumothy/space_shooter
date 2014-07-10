@@ -4,6 +4,7 @@ using System.Collections;
 public class GameController : MonoBehaviour 
 {
 	public QuestionOptions questionOptions;
+
 	public GameObject hazard;
 	public GameObject powerupPrefab;
 	public Vector3 spawnValues;
@@ -24,6 +25,14 @@ public class GameController : MonoBehaviour
 	public float slowTimeAllowed;
 	public bool presentOptions = false;
 	public float slowMoFactor;
+
+	void IntializeQuestionOptionsBehavior()
+	{
+		questionOptions = gameObject.GetComponent<QuestionOptions>();
+		if (questionOptions == null)
+			Debug.Log("Cannot find 'QuestionOptions' script");
+	}
+
 	void Start()
 	{
 		gameOver = false;
@@ -36,6 +45,7 @@ public class GameController : MonoBehaviour
 		StartCoroutine(	SpawnWaves() );
 
 		hazardsKilled =0;
+		//IntializeQuestionOptionsBehavior();
 		questionOptions.gameObject.SetActive(false);
 	}
 
