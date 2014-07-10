@@ -24,12 +24,21 @@ public class QuestionOptions : MonoBehaviour
 		SelectNext();
 	}
 
-	void Upadate()
+	void Update()
 	{
 		if (Input.GetAxis("Horizontal") < 0)
-			selectionCount--;
+		{
+			Debug.Log("selectionCount--");
+
+			MovePrevious();
+		}
 		else if (Input.GetAxis("Horizontal") > 0)
 			selectionCount++;
+	}
+
+	void MovePrevious()
+	{
+		selectionCount--;
 	}
 
 	void DeselectPrevious ()
