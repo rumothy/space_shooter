@@ -1,69 +1,74 @@
 ﻿using UnityEngine;
 using System.Collections;
+using RossLib.Collections.Generic;
 
 public class QuestionOptions : MonoBehaviour 
 {
 	public string CurrentSelection;
 	public GameObject[] selectionTexts;
+	public CircularLinkedList<GameObject> options;
 	
-	private int selectionCount = -1;
-	private int SelectionIndex 
-	{
-		get { return selectionCount % selectionTexts.Length;}
-	}
-	
-	public void SelectionChanged()
-	{
-		DeselectPrevious();
-		
-		SelectNext();
-	}
+	private Node<GameObject> currentNode;
+	private bool left = false;
+	private bool right = false;
+
+	public float fireRate;
+	private float nextFire;
+
 
 	void Start()
 	{
-		SelectNext();
+		options = new CircularLinkedList<GameObject>(selectionTexts);
+		currentNode = options.Head;
+		Select(currentNode);
 	}
 
 	void Update()
 	{
-		if (Input.GetAxis("Horizontal") < 0)
+		if (Time.time > nextFire)
 		{
-			Debug.Log("selectionCount--");
-
-			MovePrevious();
+			nextFire = Time.time + fireRate;
+			if (Input.GetAxis("Horizontal") < 0 )
+			{
+				left = true;
+			}
+			else if (Input.GetAxis("Horizontal") > 0 )
+			{
+				right = true;
+			}
 		}
-		else if (Input.GetAxis("Horizontal") > 0)
-			selectionCount++;
+
 	}
 
-	void MovePrevious()
+	void FixedUpdate()
 	{
-		selectionCount--;
+		if (left)
+		{
+			Select (currentNode.Previous);
+			left = false;
+		}
+		if (right)
+		{
+			Select (currentNode.Next);
+			right = false;
+		}
+
+
 	}
 
-	void DeselectPrevious ()
+	void Select(Node<GameObject> node)
 	{
-		if (selectionCount < 0) return;
-		GUIText selectionText = selectionTexts [SelectionIndex].guiText;
+		GUIText selectionText = currentNode.Value.guiText;
 		selectionText.color = Color.white;
 		
-	}
-	
-	void SelectNext()
-	{
-		selectionCount++;
-		GUIText selectionText = selectionTexts[SelectionIndex].guiText;
+		currentNode = node;
+		selectionText = currentNode.Value.guiText;
 		CurrentSelection = selectionText.name;
 		selectionText.color = Color.red;
-		
 	}
-	
+
 	public void ResetSelection()
 	{
-		Debug.Log(string.Format("ResetSelection::selectionCount: {0}", selectionCount));
-		Debug.Log(string.Format("ResetSelection::SelectionIndex: {0}", SelectionIndex));
-		DeselectPrevious ();
-		selectionCount = -1;
 		CurrentSelection = "";
 	}
 
