@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+
 public class GameController : MonoBehaviour 
 {
 	public GameObject questionOptionsGameObject;
@@ -26,6 +27,12 @@ public class GameController : MonoBehaviour
 	public float slowTimeAllowed;
 	public bool presentOptions = false;
 	public float slowMoFactor;
+
+
+
+	public delegate void DestroyOnHitMethod();
+
+	public DestroyOnHitMethod DestroyOnHit;
 
 	void IntializeQuestionOptionsBehavior()
 	{
@@ -71,7 +78,8 @@ public class GameController : MonoBehaviour
 			currentSlowMo = 0;
 			Time.timeScale = 1.0f;
 			questionOptions.gameObject.SetActive(false);
-
+			if (DestroyOnHit != null && ChoiceCorrect())
+				DestroyOnHit();
 		}
 	}
 
@@ -138,7 +146,8 @@ public class GameController : MonoBehaviour
 
 	public bool ChoiceCorrect()
 	{
-		return false;
+
+		return questionOptions.IsCorrect();
 	}
 
 }

@@ -8,6 +8,8 @@ public class DestroyByContact : MonoBehaviour
 	public int scoreValue;
 	private GameController gameController;
 
+	GameObject otherGameObject;
+	
 	void Start()
 	{
 		GameObject gameControllerObject = GameObject.FindWithTag("GameController");
@@ -19,7 +21,6 @@ public class DestroyByContact : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D other)
 	{
-		bool hit = true;
 		if (other.tag == "Boundary")
 			return;
 
@@ -32,10 +33,12 @@ public class DestroyByContact : MonoBehaviour
 		if (other.tag == "Missile")
 		{
 			gameController.PresentOptions();
-			if (!gameController.ChoiceCorrect())
-				hit = false;
-		}
+			//hit = gameController.ChoiceCorrect();
+			otherGameObject = other.gameObject;
+			gameController.DestroyOnHit = DestroyOnHit;
 
+			return;
+		}
 
 		if (other.tag == "Player")
 		{
@@ -43,11 +46,20 @@ public class DestroyByContact : MonoBehaviour
 			gameController.GameOver();
 		}
 
-		if (!hit) return;
 		Instantiate(explosion, transform.position, transform.rotation);
 		gameController.AddScore(scoreValue);
 		gameController.AddHazardsKilled(transform);
 		Destroy(other.gameObject);
+		Destroy(gameObject);
+	}
+
+	void DestroyOnHit()
+	{
+		Debug.Log("DestroyOnHit");
+		Instantiate(explosion, transform.position, transform.rotation);
+		gameController.AddScore(scoreValue);
+		gameController.AddHazardsKilled(transform);
+		Destroy(otherGameObject);
 		Destroy(gameObject);
 	}
 }

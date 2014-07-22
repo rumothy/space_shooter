@@ -6,70 +6,46 @@ public class QuestionOptions : MonoBehaviour
 {
 	public string CurrentSelection;
 	public GameObject[] selectionTexts;
-	public CircularLinkedList<GameObject> options;
-	
-	private Node<GameObject> currentNode;
-	private bool left = false;
-	private bool right = false;
-
-	public float fireRate;
-	private float nextFire;
-
-
-	void Start()
-	{
-		options = new CircularLinkedList<GameObject>(selectionTexts);
-		currentNode = options.Head;
-		Select(currentNode);
-	}
+	private int currentIndex = -1;
+	private int selectedIndex = -1;
 
 	void Update()
 	{
-		if (Time.time > nextFire)
-		{
-			nextFire = Time.time + fireRate;
-			if (Input.GetAxis("Horizontal") < 0 )
-			{
-				left = true;
-			}
-			else if (Input.GetAxis("Horizontal") > 0 )
-			{
-				right = true;
-			}
-		}
-
+		if (Input.GetButton("Answer1"))
+			Select(0);		
+		if (Input.GetButton("Answer2"))
+			Select(1);			
+		if (Input.GetButton("Answer3"))
+			Select(2);	
 	}
 
-	void FixedUpdate()
+	void Select(int index)
 	{
-		if (left)
+		GUIText selectionText = null;
+		if (currentIndex >= 0 && currentIndex < selectionTexts.Length)
 		{
-			Select (currentNode.Previous);
-			left = false;
+			selectionText = selectionTexts[currentIndex].guiText;
+			selectionText.color = Color.white;
 		}
-		if (right)
-		{
-			Select (currentNode.Next);
-			right = false;
-		}
-
-
-	}
-
-	void Select(Node<GameObject> node)
-	{
-		GUIText selectionText = currentNode.Value.guiText;
-		selectionText.color = Color.white;
-		
-		currentNode = node;
-		selectionText = currentNode.Value.guiText;
+		currentIndex = index;
+		selectionText = selectionTexts[currentIndex].guiText;
 		CurrentSelection = selectionText.name;
 		selectionText.color = Color.red;
+		selectedIndex = index;
 	}
 
 	public void ResetSelection()
 	{
 		CurrentSelection = "";
 	}
+
+	public bool IsCorrect()
+	{
+		int correctIndex = 2;//Random.Range(0, selectionTexts.Length);
+		Debug.Log(selectedIndex == correctIndex);
+		return selectedIndex == correctIndex;
+
+	}
+
 
 }
