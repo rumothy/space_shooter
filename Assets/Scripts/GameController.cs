@@ -68,7 +68,6 @@ public class GameController : MonoBehaviour
 				Time.timeScale = slowMoFactor;
 			else
 				Time.timeScale = 1.0f;
-			Time.fixedDeltaTime = 0.02f * Time.timeScale;
 			presentOptions = false;
 		}
 		if (Time.timeScale == slowMoFactor)
