@@ -4,9 +4,6 @@ using System.Collections;
 
 public class GameController : MonoBehaviour 
 {
-	public GameObject questionOptionsGameObject;
-	private QuestionOptions questionOptions;
-
 	public GameObject hazard;
 	public GameObject powerupPrefab;
 	public Vector3 spawnValues;
@@ -23,23 +20,6 @@ public class GameController : MonoBehaviour
 	private int score;
 	private bool gameOver;
 	private bool restart;
-	public float currentSlowMo;
-	public float slowTimeAllowed;
-	public bool presentOptions = false;
-	public float slowMoFactor;
-
-
-
-	public delegate void DestroyOnHitMethod();
-
-	public DestroyOnHitMethod DestroyOnHit;
-
-	void IntializeQuestionOptionsBehavior()
-	{
-		questionOptions = questionOptionsGameObject.GetComponent<QuestionOptions>();
-		if (questionOptions == null)
-			Debug.Log("Cannot find 'QuestionOptions' script");
-	}
 
 	void Start()
 	{
@@ -53,8 +33,6 @@ public class GameController : MonoBehaviour
 		StartCoroutine(	SpawnWaves() );
 
 		hazardsKilled =0;
-		IntializeQuestionOptionsBehavior();
-		questionOptions.gameObject.SetActive(false);
 	}
 
 	void Update()
@@ -62,24 +40,6 @@ public class GameController : MonoBehaviour
 		if (restart)
 			if (Input.GetKeyDown(KeyCode.R) || Input.GetButtonDown("Fire2"))
 				Application.LoadLevel(Application.loadedLevel);
-		if (presentOptions)
-		{
-			if (Time.timeScale == 1.0f)
-				Time.timeScale = slowMoFactor;
-			else
-				Time.timeScale = 1.0f;
-			presentOptions = false;
-		}
-		if (Time.timeScale == slowMoFactor)
-			currentSlowMo += Time.deltaTime;
-		if (currentSlowMo > slowTimeAllowed)
-		{
-			currentSlowMo = 0;
-			Time.timeScale = 1.0f;
-			questionOptions.gameObject.SetActive(false);
-			if (DestroyOnHit != null && ChoiceCorrect())
-				DestroyOnHit();
-		}
 	}
 
 	IEnumerator SpawnWaves()
@@ -133,20 +93,4 @@ public class GameController : MonoBehaviour
 		gameOverText.text = "Game Over";
 		gameOver = true;
 	}
-
-	public void PresentOptions()
-	{
-		if (Time.timeScale == 1.0f)
-		{
-			presentOptions = true;
-			questionOptions.gameObject.SetActive(true);
-		}
-	}
-
-	public bool ChoiceCorrect()
-	{
-
-		return questionOptions.IsCorrect();
-	}
-
 }
